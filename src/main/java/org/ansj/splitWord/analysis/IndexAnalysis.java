@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.util.LinkedList;
 import java.util.List;
 
-import love.cq.domain.Forest;
-
 import org.ansj.domain.Term;
 import org.ansj.domain.TermNatures;
 import org.ansj.recognition.AsianPersonRecognition;
@@ -14,8 +12,10 @@ import org.ansj.recognition.NumRecognition;
 import org.ansj.recognition.UserDefineRecognition;
 import org.ansj.splitWord.Analysis;
 import org.ansj.splitWord.impl.GetWordsImpl;
+import org.ansj.util.AnsjReader;
 import org.ansj.util.Graph;
 import org.ansj.util.MyStaticValue;
+import org.nlpcn.commons.lang.tire.domain.Forest;
 
 /**
  * 用于检索的分词方式
@@ -108,7 +108,7 @@ public class IndexAnalysis extends Analysis {
 
 	public IndexAnalysis(BufferedReader reader, Forest... forests) {
 		this.forests = forests;
-		super.resetContent(reader);
+		super.resetContent(new AnsjReader(reader));
 	}
 
 	public static List<Term> parse(String str) {

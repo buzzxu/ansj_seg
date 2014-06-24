@@ -1,25 +1,23 @@
 package org.ansj.splitWord;
 
-import static org.ansj.library.InitDictionary.IN_SYSTEM;
-import static org.ansj.library.InitDictionary.status;
-
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import love.cq.domain.Forest;
-import love.cq.splitWord.GetWord;
-import love.cq.util.StringUtil;
 
 import org.ansj.domain.Term;
 import org.ansj.domain.TermNature;
 import org.ansj.domain.TermNatures;
+import static org.ansj.library.DATDictionary.*;
 import org.ansj.library.UserDefineLibrary;
 import org.ansj.splitWord.impl.GetWordsImpl;
+import org.ansj.util.AnsjReader;
 import org.ansj.util.Graph;
 import org.ansj.util.MyStaticValue;
 import org.ansj.util.WordAlert;
+import org.nlpcn.commons.lang.tire.GetWord;
+import org.nlpcn.commons.lang.tire.domain.Forest;
+import org.nlpcn.commons.lang.util.StringUtil;
 
 /**
  * 基本分词+人名识别
@@ -35,11 +33,6 @@ public abstract class Analysis {
 	public int offe;
 
 	/**
-	 * 记录上一次文本长度
-	 */
-	private int tempLength;
-
-	/**
 	 * 分词的类
 	 */
 	private GetWordsImpl gwi = new GetWordsImpl();
@@ -49,7 +42,7 @@ public abstract class Analysis {
 	/**
 	 * 文档读取流
 	 */
-	private BufferedReader br;
+	private AnsjReader br;
 
 	protected Analysis() {
 	};
@@ -73,18 +66,15 @@ public abstract class Analysis {
 		}
 
 		String temp = br.readLine();
-
+		offe = br.getStart();
 		while (StringUtil.isBlank(temp)) {
 			if (temp == null) {
 				return null;
 			} else {
-				offe = offe + temp.length() + 1;
 				temp = br.readLine();
 			}
 
 		}
-
-		offe += tempLength;
 
 		// 歧异处理字符串
 
@@ -138,14 +128,14 @@ public abstract class Analysis {
 		String str = null;
 		char c = 0;
 		for (int i = startOffe; i < endOffe; i++) {
-			switch (status[chars[i]]) {
+			switch (status(chars[i])) {
 			case 0:
-				gp.addTerm(new Term(chars[i] + "", i, TermNatures.NULL));
+				gp.addTerm(new Term(String.valueOf(chars[i]), i, TermNatures.NULL));
 				break;
 			case 4:
 				start = i;
 				end = 1;
-				while (++i < endOffe && status[chars[i]] == 4) {
+				while (++i < endOffe && status(chars[i]) == 4) {
 					end++;
 				}
 				str = WordAlert.alertEnglish(chars, start, end);
@@ -155,7 +145,7 @@ public abstract class Analysis {
 			case 5:
 				start = i;
 				end = 1;
-				while (++i < endOffe && status[chars[i]] == 5) {
+				while (++i < endOffe && status(chars[i]) == 5) {
 					end++;
 				}
 				str = WordAlert.alertNumber(chars, start, end);
@@ -180,13 +170,13 @@ public abstract class Analysis {
 
 				gwi.setChars(chars, start, end);
 				while ((str = gwi.allWords()) != null) {
-					gp.addTerm(new Term(str, gwi.offe, gwi.getTermNatures()));
+					gp.addTerm(new Term(str, gwi.offe, gwi.getItem()));
 				}
 
 				/**
 				 * 如果未分出词.以未知字符加入到gp中
 				 */
-				if (IN_SYSTEM[c] > 0 || status[c] > 3) {
+				if (IN_SYSTEM[c] > 0 || status(c) > 3) {
 					i -= 1;
 				} else {
 					gp.addTerm(new Term(String.valueOf(c), i, TermNatures.NULL));
@@ -196,22 +186,23 @@ public abstract class Analysis {
 			}
 		}
 	}
-	
+
 	/**
 	 * 将为标准化的词语设置到分词中
+	 * 
 	 * @param gp
 	 * @param result
 	 */
-	protected void setRealName(Graph graph ,List<Term> result){
-		
+	protected void setRealName(Graph graph, List<Term> result) {
+
 		if (!MyStaticValue.isRealName) {
-			return ;
+			return;
 		}
-		
-		String str = graph.realStr ;
-		
+
+		String str = graph.realStr;
+
 		for (Term term : result) {
-			term.setRealName(str.substring(term.getOffe(),term.getOffe()+term.getName().length())) ;
+			term.setRealName(str.substring(term.getOffe(), term.getOffe() + term.getName().length()));
 		}
 	}
 
@@ -232,9 +223,8 @@ public abstract class Analysis {
 	 * 
 	 * @param br
 	 */
-	public void resetContent(BufferedReader br) {
+	public void resetContent(AnsjReader br) {
 		this.offe = 0;
-		this.tempLength = 0;
 		this.br = br;
 	}
 }

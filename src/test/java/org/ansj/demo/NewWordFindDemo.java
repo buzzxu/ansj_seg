@@ -5,12 +5,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
-import love.cq.util.IOUtil;
 
 import org.ansj.dic.LearnTool;
 import org.ansj.domain.Term;
 import org.ansj.domain.TermNatures;
 import org.ansj.splitWord.analysis.NlpAnalysis;
+import org.nlpcn.commons.lang.util.IOUtil;
 
 /**
  * 这是一个新词发现的简单例子.
@@ -27,7 +27,7 @@ public class NewWordFindDemo {
 		NlpAnalysis nlpAnalysis = new NlpAnalysis(reader, learn);
 		Term term = null;
 		while ((term = nlpAnalysis.next()) != null) {
-			if (!TermNatures.NW.equals(term.getTermNatures())) {
+			if (!TermNatures.NW.equals(term.termNatures())) {
 				continue;
 			}
 			if (hm.containsKey(term.getName())) {

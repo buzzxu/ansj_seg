@@ -6,13 +6,12 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import love.cq.util.StringUtil;
-
 import org.ansj.domain.Nature;
 import org.ansj.domain.NewWord;
 import org.ansj.domain.Term;
 import org.ansj.domain.TermNatures;
 import org.ansj.util.TermUtil;
+import org.nlpcn.commons.lang.util.StringUtil;
 
 /**
  * 外国人名识别
@@ -71,7 +70,7 @@ public class ForeignPersonRecognition {
 			term = terms[i];
 			// 如果名字的开始是人名的前缀,或者后缀.那么忽略
 			if (tempList.size() == 0) {
-				if (term.getTermNatures().personAttr.end > 10) {
+				if (term.termNatures().personAttr.end > 10) {
 					continue;
 				}
 
@@ -82,7 +81,7 @@ public class ForeignPersonRecognition {
 
 			name = term.getName();
 
-			if (term.getTermNatures() == TermNatures.NR || term.getTermNatures() == TermNatures.NW || name.length() == 1) {
+			if (term.termNatures() == TermNatures.NR || term.termNatures() == TermNatures.NW || name.length() == 1) {
 				boolean flag = validate(name);
 				if (flag) {
 					tempList.add(term);
@@ -157,7 +156,7 @@ public class ForeignPersonRecognition {
 			term = terms[i];
 			// 如果名字的开始是人名的前缀,或者后缀.那么忽略
 			if (tempList.size() == 0) {
-				if (term.getTermNatures().personAttr.end > 10) {
+				if (term.termNatures().personAttr.end > 10) {
 					continue;
 				}
 
@@ -167,7 +166,7 @@ public class ForeignPersonRecognition {
 			}
 
 			name = term.getName();
-			if (term.getTermNatures() == TermNatures.NR || term.getTermNatures() == TermNatures.NW || name.length() == 1) {
+			if (term.termNatures() == TermNatures.NR || term.termNatures() == TermNatures.NW || name.length() == 1) {
 				boolean flag = validate(name);
 				if (flag) {
 					tempList.add(term);
