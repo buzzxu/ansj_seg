@@ -2,15 +2,11 @@ package org.ansj.ansj_lucene4_plug;
 
 //package org.ansj.lucene3;
 //
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.ResourceBundle;
-
-import love.cq.util.IOUtil;
 
 import org.ansj.library.UserDefineLibrary;
 import org.ansj.lucene.util.PorterStemmer;
@@ -28,7 +24,6 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.memory.MemoryIndex;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
@@ -76,9 +71,10 @@ public class IndexTest {
 		Analyzer analyzer = new AnsjIndexAnalysis(hs, false);
 		Directory directory = null;
 		IndexWriter iwriter = null;
+		String text = "季德胜蛇药片 10片*6板 ";
 
-		String text = "上海虹桥机场我愛北京天安門";
-
+		UserDefineLibrary.insertWord("蛇药片", "n", 1000);
+		
 		IndexWriterConfig ic = new IndexWriterConfig(Version.LUCENE_44, analyzer);
 		// 建立内存索引对象
 		directory = new RAMDirectory();
@@ -93,7 +89,8 @@ public class IndexTest {
 		;
 
 		System.out.println("index ok to search!");
-		search(queryAnalyzer, directory, "\"上海虹桥\"~1");
+		search(queryAnalyzer, directory, "\"季德胜蛇药片\"");
+		
 	}
 
 	private void search(Analyzer queryAnalyzer, Directory directory, String queryStr) throws CorruptIndexException, IOException, ParseException {
