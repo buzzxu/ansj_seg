@@ -1,9 +1,9 @@
 package org.ansj.splitWord;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.util.LinkedList;
 import java.util.List;
-
 
 import org.ansj.domain.Term;
 import org.ansj.domain.TermNature;
@@ -39,6 +39,8 @@ public abstract class Analysis {
 
 	protected Forest[] forests = null;
 
+	private Forest ambiguityForest = UserDefineLibrary.ambiguityForest;
+
 	/**
 	 * 文档读取流
 	 */
@@ -55,10 +57,9 @@ public abstract class Analysis {
 	 * @return
 	 * @throws IOException
 	 */
-	private Term term = null;
 
 	public Term next() throws IOException {
-
+		Term term = null;
 		if (!terms.isEmpty()) {
 			term = terms.poll();
 			term.updateOffe(offe);
@@ -97,10 +98,11 @@ public abstract class Analysis {
 	private void analysisStr(String temp) {
 		Graph gp = new Graph(temp);
 		int startOffe = 0;
-		if (UserDefineLibrary.ambiguityForest != null) {
-			GetWord gw = new GetWord(UserDefineLibrary.ambiguityForest, gp.chars);
+
+		if (this.ambiguityForest != null) {
+			GetWord gw = new GetWord(this.ambiguityForest, gp.chars);
 			String[] params = null;
-			while ((gw.getAllWords()) != null) {
+			while ((gw.getFrontWords()) != null) {
 				if (gw.offe > startOffe) {
 					analysis(gp, startOffe, gw.offe);
 				}
@@ -226,5 +228,23 @@ public abstract class Analysis {
 	public void resetContent(AnsjReader br) {
 		this.offe = 0;
 		this.br = br;
+	}
+
+	public void resetContent(Reader reader) {
+		this.offe = 0;
+		this.br = new AnsjReader(reader);
+	}
+
+	public void resetContent(Reader reader, int buffer) {
+		this.offe = 0;
+		this.br = new AnsjReader(reader, buffer);
+	}
+
+	public Forest getAmbiguityForest() {
+		return ambiguityForest;
+	}
+
+	public void setAmbiguityForest(Forest ambiguityForest) {
+		this.ambiguityForest = ambiguityForest;
 	}
 }
